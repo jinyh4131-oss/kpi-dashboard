@@ -242,7 +242,33 @@ body {
   color: #fff;
   border-color: #0a7d55;
 }
-/* ─── 매출역성장 / 영업이익적자 버튼 ─── */
+/* ★ v34: 점포 KPI 팝업 */
+.skpi-wrap { font-family: var(--font-sans); background: var(--color-background-secondary,#f3f4f6); border-radius: 14px; overflow: hidden; }
+.skpi-hd { display: flex; align-items: center; justify-content: space-between; padding: 16px 16px 12px; background: var(--header-bg); }
+.skpi-name { font-size: 17px; font-weight: 700; color: #e2e8f4; }
+.skpi-date { font-size: 11px; color: #93c5fd; margin-top: 3px; }
+.skpi-close { background: none; border: none; color: #93c5fd; font-size: 18px; cursor: pointer; padding: 0; line-height: 1; }
+.skpi-close:hover { color: #fff; }
+.skpi-inner { padding: 12px; display: flex; flex-direction: column; gap: 8px; background: var(--surface1); }
+.skpi-card { background: var(--surface2,#fff); border-radius: 8px; padding: 10px 12px; border: 0.5px solid var(--border); }
+.skpi-card-title { font-size: 10px; color: var(--text-muted); margin-bottom: 8px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 500; }
+.skpi-row3 { display: grid; grid-template-columns: 40px 1fr 1fr; align-items: center; gap: 4px; margin-bottom: 6px; }
+.skpi-row3:last-child { margin-bottom: 0; }
+.skpi-row2 { display: flex; align-items: center; justify-content: space-between; }
+.skpi-period { font-size: 12px; color: var(--text-muted); }
+.skpi-amt { font-size: 15px; font-weight: 500; color: var(--text); }
+.skpi-rate { font-size: 15px; font-weight: 500; text-align: right; }
+.skpi-lbl { font-size: 12px; color: var(--text-muted); margin-bottom: 3px; }
+.skpi-val-lg { font-size: 20px; font-weight: 700; }
+.skpi-val-md { font-size: 15px; font-weight: 500; }
+.skpi-cu-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; }
+.skpi-cu-cell { background: var(--surface1,#f3f4f6); border-radius: 6px; padding: 8px 4px; text-align: center; }
+.skpi-cu-name { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 500; }
+.skpi-cu-sub { font-size: 10px; color: var(--text-muted); margin-bottom: 1px; }
+.skpi-cu-val { font-size: 12px; font-weight: 600; margin-bottom: 3px; }
+.skpi-pos { color: var(--green); }
+.skpi-neg { color: var(--red); }
+.skpi-neu { color: var(--text); }
 .btn-alert {
   font-family: var(--font);
   font-size: 11px;
@@ -2228,6 +2254,13 @@ td.total-cell:hover { background: #dbeafe !important; }
 </div>
 
 <!-- GANGSU BCD MODAL -->
+<!-- ★ v34: 점포 KPI 팝업 -->
+<div class="alert-overlay" id="storeKpiOverlay" onclick="handleAlertOverlayClick(event,'storeKpiOverlay')">
+  <div class="alert-modal" style="width:min(360px,96vw);background:var(--surface1);">
+    <div id="storeKpiBody"></div>
+  </div>
+</div>
+
 <div class="alert-overlay" id="gangsuBcdOverlay" onclick="handleAlertOverlayClick(event,'gangsuBcdOverlay')">
   <div class="alert-modal" onclick="event.stopPropagation()" style="max-width:560px">
     <div class="alert-header">
@@ -3079,6 +3112,9 @@ function buildHeader(stores) {
     th.textContent = s.manager || '';
     th.dataset.store = s.name;
     if(s.region !== lastRegM) { th.classList.add('region-sep'); lastRegM = s.region; }
+    th.style.cursor = 'pointer';
+    th.title = s.name + ' KPI 보기';
+    th.onclick = () => openStoreKpiPopup(s);
     trM.appendChild(th);
   });
   thead.appendChild(trM);
@@ -3098,8 +3134,10 @@ function buildHeader(stores) {
   stores.forEach(s => {
     const th = document.createElement('th');
     th.textContent = s.name;
-    th.title = s.name + '점';
+    th.title = s.name + ' KPI 보기';
     if(s.region !== lastReg) { th.classList.add('region-sep'); lastReg = s.region; }
+    th.style.cursor = 'pointer';
+    th.onclick = () => openStoreKpiPopup(s);
     tr2.appendChild(th);
   });
   thead.appendChild(tr2);
@@ -3261,10 +3299,14 @@ function buildBody(stores) {
           td.onclick = (e) => { e.stopPropagation(); window.open(s.floor_map_url, '_blank'); };
         }
       } else if (kpi.id === 'bcd') {
-        // ★ BCD 대항목 → 전체 복종 팝업
         td.style.cursor = 'pointer';
         td.title = 'BCD 브랜드 구성 보기';
         td.onclick = (e) => { e.stopPropagation(); openBcdGradeModal(s, null); };
+      } else if (kpi.id === 'sales') {
+        // ★ v34: 매출성장률 대항목 행 클릭 → 점포 KPI 팝업
+        td.style.cursor = 'pointer';
+        td.title = '점포 KPI 상세 보기';
+        td.onclick = (e) => { e.stopPropagation(); openStoreKpiPopup(s); };
       } else {
         td.onclick = (e) => { e.stopPropagation(); openModal(s.name, kpi, null, v, fmt); };
       }
@@ -6367,6 +6409,8 @@ async function prefetchSalesCache() {
     if (window.SALES_CACHE.mtd) {
       updateDateLabel(window.SALES_CACHE.mtd.dataDate || '');
     }
+    // ★ v34: prefetch 완료 후 상단 카드 재렌더링 — 전일 수치 즉시 반영
+    if (ALL_STORES.length) buildTabCards(ALL_STORES);
     console.log('매출 캐시 준비 완료 (daily/mtd)');
   } catch(e) {
     console.warn('매출 prefetch 실패:', e.message);
@@ -6412,7 +6456,7 @@ document.addEventListener('keydown', function(e) {
   // 팝업이 열려 있으면 방향키 스크롤 비활성화
   const OVERLAY_IDS = ['overlay','brandOverlay','nbOverlay','salesAlertOverlay',
     'profitAlertOverlay','histOverlay','bsOverlay','cuFOverlay','cuBOverlay',
-    'gangsuBcdOverlay','hot20Overlay'];
+    'gangsuBcdOverlay','hot20Overlay','storeKpiOverlay'];
   const isPopupOpen = OVERLAY_IDS.some(id => document.getElementById(id)?.classList.contains('open'))
     || document.getElementById('debugOverlay')?.style.display === 'flex';
   if (isPopupOpen) return;
@@ -6429,8 +6473,141 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-// ═══════════════════════════════════════════════════════════════
-//  DEBUG PANEL — ?debug=1 진단 모드
+// ★ v34: 점포 KPI 팝업 — 매출성장률 대항목 행 클릭 시 오픈
+function openStoreKpiPopup(store) {
+  const sid     = String(store.id).trim();
+  const d       = DATA[store.name] || {};
+  const daily   = (window.SALES_CACHE?.daily?.stores  || {})[sid] || {};
+  const mtdS    = (window.SALES_CACHE?.mtd?.stores    || {})[sid] || {};
+
+  function fmt(v)  { return v === null || v === undefined ? '-' : (v >= 0 ? '+' : '') + v.toFixed(1) + '%'; }
+  function fmtAmt(v) { if (v === null || v === undefined) return '-'; const b = Math.round(v / 100000000 * 10) / 10; return b.toFixed(1) + '억'; }
+  function cls(v)  { return v === null ? 'skpi-neu' : v > 0 ? 'skpi-pos' : v < 0 ? 'skpi-neg' : 'skpi-neu'; }
+
+  // 매출 전일
+  const dCy = daily.sales_cy ?? null;
+  const dPy = daily.sales_py ?? null;
+  const dg  = (dCy !== null && dPy && dPy > 0) ? (dCy - dPy) / dPy * 100 : null;
+
+  // 매출 당월누적
+  const mCy = mtdS.sales_cy ?? d.sales_cy ?? null;
+  const mPy = mtdS.sales_py ?? d.sales_py ?? null;
+  const mg  = (mCy !== null && mPy && mPy > 0) ? (mCy - mPy) / mPy * 100 : null;
+
+  // 영업이익
+  const pCy = d.profit_cy ?? null;
+  const pPy = d.profit_py ?? null;
+  const pg  = (pCy !== null && pPy && pPy > 0) ? (pCy - pPy) / pPy * 100 : null;
+
+  // CU별 성장률
+  const cuCodes = [
+    { code:'B', label:'특정' },
+    { code:'F', label:'의류' },
+    { code:'D', label:'하이퍼' },
+    { code:'O', label:'픽스' },
+  ];
+  function cuGrowth(storeMap, code) {
+    const cu = (storeMap[sid] || {}).cu?.[code];
+    if (!cu || cu.cy == null || !cu.py || cu.py === 0) return null;
+    return (cu.cy - cu.py) / cu.py * 100;
+  }
+  const cuHTML = cuCodes.map(({ code, label }) => {
+    const cdg = cuGrowth(window.SALES_CACHE?.daily?.stores || {}, code);
+    const cmg = cuGrowth(window.SALES_CACHE?.mtd?.stores   || {}, code);
+    // mtd 폴백: DATA cu
+    const cmgFb = cmg ?? (() => {
+      const cu = d.cu?.[code];
+      if (!cu || cu.cy == null || !cu.py || cu.py === 0) return null;
+      return (cu.cy - cu.py) / cu.py * 100;
+    })();
+    return `<div class="skpi-cu-cell">
+      <div class="skpi-cu-name">${label}</div>
+      <div class="skpi-cu-sub">전일</div>
+      <div class="skpi-cu-val ${cls(cdg)}">${fmt(cdg !== null ? parseFloat(cdg.toFixed(1)) : null)}</div>
+      <div class="skpi-cu-sub">당월</div>
+      <div class="skpi-cu-val ${cls(cmgFb)}">${fmt(cmgFb !== null ? parseFloat(cmgFb.toFixed(1)) : null)}</div>
+    </div>`;
+  }).join('');
+
+  // BCD
+  const bcd = d.bcdg_total ?? null;
+  const bcdCls = bcd === null ? 'skpi-neu' : bcd >= 60 ? 'skpi-pos' : bcd < 50 ? 'skpi-neg' : 'skpi-neu';
+
+  // 평당매출
+  const areaSalesSum = d.area_sales_sum ?? null;
+  const areaSizeSum  = d.area_size_sum  ?? null;
+  const areaWorkDays = d.area_work_days ?? null;
+  const areaVal = (areaSalesSum && areaSizeSum && areaWorkDays)
+    ? Math.round(areaSalesSum / areaSizeSum / areaWorkDays).toLocaleString('ko-KR') + '원'
+    : '-';
+
+  // 공실
+  const vac = d.vac_total ?? null;
+
+  // 날짜
+  const dataDate = window.SALES_CACHE?.daily?.dataDate || window._currentDataDate || '';
+  const dateLbl  = dataDate ? (() => { const m = parseInt(dataDate.slice(5,7)); const dd = parseInt(dataDate.slice(8,10)); return `${m}월 ${dd}일 기준`; })() : '';
+
+  const html = `
+  <div class="skpi-wrap">
+    <div class="skpi-hd">
+      <div>
+        <div class="skpi-name">${store.name}</div>
+        ${dateLbl ? `<div class="skpi-date">${dateLbl}</div>` : ''}
+      </div>
+      <button class="skpi-close" onclick="closeAlertModal('storeKpiOverlay')">✕</button>
+    </div>
+    <div class="skpi-inner">
+
+      <div class="skpi-card">
+        <div class="skpi-card-title">매출성장률</div>
+        <div class="skpi-row3">
+          <span class="skpi-period">전일</span>
+          <span class="skpi-amt">${fmtAmt(dCy)}</span>
+          <span class="skpi-rate ${cls(dg)}">${fmt(dg !== null ? parseFloat(dg.toFixed(1)) : null)}</span>
+        </div>
+        <div class="skpi-row3">
+          <span class="skpi-period">당월누적</span>
+          <span class="skpi-amt">${fmtAmt(mCy)}</span>
+          <span class="skpi-rate ${cls(mg)}">${fmt(mg !== null ? parseFloat(mg.toFixed(1)) : null)}</span>
+        </div>
+      </div>
+
+      <div class="skpi-card">
+        <div class="skpi-card-title">영업이익</div>
+        <div class="skpi-row2">
+          <div><div class="skpi-lbl">금액</div><div class="skpi-val-lg ${cls(pCy)}">${fmtAmt(pCy !== null ? pCy * 1000000 : null)}</div></div>
+          <div style="text-align:right"><div class="skpi-lbl">성장률</div><div class="skpi-val-md ${cls(pg)}">${fmt(pg !== null ? parseFloat(pg.toFixed(1)) : null)}</div></div>
+        </div>
+      </div>
+
+      <div class="skpi-card">
+        <div class="skpi-card-title">CU별 성장률</div>
+        <div class="skpi-cu-grid">${cuHTML}</div>
+      </div>
+
+      <div class="skpi-card">
+        <div class="skpi-row2">
+          <div><div class="skpi-lbl">BCD</div><div class="skpi-val-lg ${bcdCls}">${bcd !== null ? bcd.toFixed(1) + '점' : '-'}</div></div>
+          <div style="text-align:right"><div class="skpi-lbl">평당매출</div><div class="skpi-val-md skpi-neu">${areaVal}</div></div>
+        </div>
+      </div>
+
+      <div class="skpi-card">
+        <div class="skpi-row2">
+          <div class="skpi-lbl">공실</div>
+          <div class="skpi-val-md ${vac !== null && vac > 0 ? 'skpi-neg' : 'skpi-neu'}">${vac !== null ? vac + '개' : '-'}</div>
+        </div>
+      </div>
+
+    </div>
+  </div>`;
+
+  document.getElementById('storeKpiBody').innerHTML = html;
+  document.getElementById('storeKpiOverlay').classList.add('open');
+}
+
+
 // ═══════════════════════════════════════════════════════════════
 (function() {
   const isDebug = new URLSearchParams(window.location.search).get('debug') === '1';
