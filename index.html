@@ -242,7 +242,6 @@ body {
   color: #fff;
   border-color: #0a7d55;
 }
-/* ★ v34: 점포 KPI 팝업 */
 .skpi-wrap { font-family: var(--font-sans); background: var(--color-background-secondary,#f3f4f6); border-radius: 14px; overflow: hidden; }
 .skpi-hd { display: flex; align-items: center; justify-content: space-between; padding: 16px 16px 12px; background: var(--header-bg); }
 .skpi-name { font-size: 17px; font-weight: 700; color: #e2e8f4; }
@@ -389,7 +388,6 @@ body {
   font-size: 10px;
   font-weight: 500;
 }
-/* ★ v34: 매출성장률 대항목 행 배지 (HOT 20과 동일 스타일) */
 .sales-grw-pos {
   display: inline-block;
   background: var(--green-bg);
@@ -933,6 +931,26 @@ body {
 }
 .nb-filter-btn:hover { border-color: var(--accent); color: var(--accent); }
 .nb-filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.nb-grade-btn {
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.13s;
+  min-width: 24px;
+}
+.nb-grade-btn:hover { border-color: var(--accent); color: var(--accent); }
+.nb-grade-btn.active { background: #334155; border-color: #334155; color: #fff; }
+.nb-grade-btn.active[data-grade="S"] { background: #f59e0b; border-color: #f59e0b; }
+.nb-grade-btn.active[data-grade="A"] { background: #16a34a; border-color: #16a34a; }
+.nb-grade-btn.active[data-grade="B"] { background: #2563eb; border-color: #2563eb; }
+.nb-grade-btn.active[data-grade="C"] { background: #64748b; border-color: #64748b; }
+.nb-grade-btn.active[data-grade="F"] { background: #dc2626; border-color: #dc2626; }
 .nb-search-wrap {
   margin-left: auto;
   position: relative;
@@ -1001,7 +1019,7 @@ body {
   z-index: 2;
   white-space: nowrap;
 }
-.nb-table thead th:nth-child(5) { text-align: left; }
+.nb-table thead th:nth-child(6) { text-align: left; }
 .nb-table tbody tr:hover { background: var(--accent-bg); }
 .nb-table tbody td {
   padding: 8px 12px;
@@ -1010,7 +1028,21 @@ body {
   color: var(--text);
   white-space: nowrap;
 }
-.nb-table tbody td:nth-child(5) { text-align: left; font-weight: 500; }
+.nb-table tbody td:nth-child(6) { text-align: left; font-weight: 500; }
+.nb-cat-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  background: #eef2f7;
+  color: #475569;
+  white-space: nowrap;
+}
+.nb-cat-badge.cat-f {
+  background: #f3e8ff;
+  color: #7c3aed;
+}
 .nb-rank {
   font-size: 11px;
   font-weight: 700;
@@ -2361,7 +2393,6 @@ td.total-cell:hover { background: #dbeafe !important; }
 </div>
 
 <!-- GANGSU BCD MODAL -->
-<!-- ★ v34: 점포 KPI 팝업 -->
 <div class="alert-overlay" id="storeKpiOverlay" onclick="handleAlertOverlayClick(event,'storeKpiOverlay')">
   <div class="alert-modal" style="width:min(360px,96vw);background:var(--surface1);">
     <div id="storeKpiBody"></div>
@@ -2532,6 +2563,14 @@ td.total-cell:hover { background: #dbeafe !important; }
       <button class="nb-filter-btn active" onclick="setNbFilter('전체',this)">전체</button>
       <button class="nb-filter-btn" onclick="setNbFilter('B',this)">특정 B</button>
       <button class="nb-filter-btn" onclick="setNbFilter('F',this)">의류 F</button>
+      <span style="width:1px;height:18px;background:var(--border);margin:0 6px"></span>
+      <button class="nb-grade-btn active" data-grade="전체" onclick="setNbGradeFilter('전체',this)">등급 전체</button>
+      <button class="nb-grade-btn" data-grade="S" onclick="setNbGradeFilter('S',this)">S</button>
+      <button class="nb-grade-btn" data-grade="A" onclick="setNbGradeFilter('A',this)">A</button>
+      <button class="nb-grade-btn" data-grade="B" onclick="setNbGradeFilter('B',this)">B</button>
+      <button class="nb-grade-btn" data-grade="C" onclick="setNbGradeFilter('C',this)">C</button>
+      <button class="nb-grade-btn" data-grade="F" onclick="setNbGradeFilter('F',this)">F</button>
+      <button class="nb-grade-btn" data-grade="-" onclick="setNbGradeFilter('-',this)">미등록</button>
       <button class="nb-filter-btn" id="nb4dBtn" onclick="toggleNb4d(this)" style="margin-left:8px;border-color:var(--border2);color:var(--text-muted)">4일 무매출 제외</button>
       <div class="nb-search-wrap">
         <span class="nb-search-icon">🔍</span>
@@ -2552,8 +2591,10 @@ td.total-cell:hover { background: #dbeafe !important; }
             <th>점포</th>
             <th>본부</th>
             <th>층</th>
+            <th data-label="등급" style="cursor:pointer;user-select:none" onclick="sortNbBy('grade')">등급 ↕</th>
             <th>브랜드명</th>
             <th>CU</th>
+            <th>카테고리</th>
             <th data-label="매출(cy)" style="cursor:pointer;user-select:none" onclick="sortNbBy('cy')">매출(cy) ↕</th>
             <th data-label="평당매출" style="cursor:pointer;user-select:none" onclick="sortNbBy('areaSales')">평당매출 ↕</th>
             <th data-label="평수" style="cursor:pointer;user-select:none" onclick="sortNbBy('areaSize')">평수 ↕</th>
@@ -2693,10 +2734,8 @@ td.total-cell:hover { background: #dbeafe !important; }
 </div>
 
 <script>
-// ═══════════════════════════════════════════
 //  구글시트 연동 설정
 //  Apps Script 웹앱 배포 후 URL을 아래에 입력
-// ═══════════════════════════════════════════
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxWdRN78pxRE7uprnX7Of58F3lYk7kqs8uE5LVEIXBpcHCgtJ2pIyULiK0OgJtZr6zL/exec'; // ← 여기에 웹앱 URL 붙여넣기
 
 // 오늘 날짜 문자열 (yyyy-MM-dd)
@@ -2945,10 +2984,8 @@ function applySheetData(sheetResult) {
   return true;
 }
 
-// ═══════════════════════════════════════════
 //  점포 마스터 — 완전 동적 (구글시트 기준)
 //  fetch 성공 또는 캐시 복원 시 applySheetData()가 채워줌
-// ═══════════════════════════════════════════
 const ALL_STORES = [];
 
 const KPI = [
@@ -3410,7 +3447,6 @@ function buildBody(stores) {
       const { v, fmt } = parentVal(kpi.id, s.name);
       if(s.region !== lastRegP) { td.classList.add('region-sep-light'); lastRegP = s.region; }
 
-      // ★ v34: 매출성장률 대항목 행 — 배지 스타일 적용
       if (kpi.id === 'sales') {
         td.className = 'num-cell';
         const txt = fmtVal(v, fmt);
@@ -3439,7 +3475,6 @@ function buildBody(stores) {
         td.title = 'BCD 브랜드 구성 보기';
         td.onclick = (e) => { e.stopPropagation(); openBcdGradeModal(s, null); };
       } else if (kpi.id === 'sales') {
-        // ★ v34: 매출성장률 대항목 행 클릭 → 점포 KPI 팝업
         td.style.cursor = 'pointer';
         td.title = '점포 KPI 상세 보기';
         td.onclick = (e) => { e.stopPropagation(); openStoreKpiPopup(s); };
@@ -5154,7 +5189,6 @@ function renderCuModal(cuCode) {
           brandRows = colHdr + brandList.map(b => {
             const isUnmatched = (b.py === 0 && b.cy > 0);
             // ★ 매칭상태 컬럼 — 검증 완료 후 아래 matchBadge 변수 한 줄만 삭제
-            // ★ 매칭상태 — 검증 완료 후 아래 matchBadge 변수 한 줄만 삭제
             const matchBadge = isUnmatched ? ` 🔴` : '';
             return `
             <div class="cu-brand-item">
@@ -5255,17 +5289,22 @@ function toggleCuPg(cuCode, pgCode) {
 let nbCurrentFilter = '전체';
 let nbAllData = []; // 전체 신규브랜드 데이터 캐시
 let nb4dActive = false; // 4일 무매출 제외 토글 상태
-let nbSortCol = null;   // 정렬 컬럼: 'cy' | 'areaSales' | 'areaSize' | 'workDays'
+let nbGradeFilter = '전체'; // 등급 필터: '전체'|'S'|'A'|'B'|'C'|'F'|'-'
+let nbSortCol = null;   // 정렬 컬럼: 'cy' | 'areaSales' | 'areaSize' | 'workDays' | 'grade'
 let nbSortDir = 'asc';  // 정렬 방향: 'asc' | 'desc'
 
 function openNewBrandModal() {
   nbAllData = buildNewBrandData();
   nbCurrentFilter = '전체';
   nb4dActive = false;
+  nbGradeFilter = '전체';
   nbSortCol = null;
   nbSortDir = 'asc';
   document.querySelectorAll('.nb-filter-btn').forEach(b => b.classList.remove('active'));
   document.querySelector('.nb-filter-btn').classList.add('active');
+  document.querySelectorAll('.nb-grade-btn').forEach(b => b.classList.remove('active'));
+  const gAll = document.querySelector('.nb-grade-btn[data-grade="전체"]');
+  if (gAll) gAll.classList.add('active');
   const btn4d = document.getElementById('nb4dBtn');
   if (btn4d) { btn4d.classList.remove('active'); btn4d.style.color = 'var(--text-muted)'; }
   // 검색창 초기화
@@ -5306,6 +5345,13 @@ function setNbFilter(cu, btn) {
   applyNbFilters();
 }
 
+function setNbGradeFilter(grade, btn) {
+  nbGradeFilter = grade;
+  document.querySelectorAll('.nb-grade-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyNbFilters();
+}
+
 function onNbSearch(val) {
   document.getElementById('nbSearchClear').style.display = val ? 'block' : 'none';
   applyNbFilters();
@@ -5332,13 +5378,16 @@ function applyNbFilters() {
   const cu    = nbCurrentFilter;
   let rows    = nbAllData;
   if (cu !== '전체') rows = rows.filter(r => r.cu === cu);
+  if (nbGradeFilter !== '전체') rows = rows.filter(r => (r.grade || '-') === nbGradeFilter);
   if (nb4dActive) rows = rows.filter(r => (r.cy4d || 0) > 0);
-  if (query) rows = rows.filter(r =>
-    r.storeName.toLowerCase().includes(query) ||
-    r.brandName.toLowerCase().includes(query)
-  );
+  if (query) rows = rows.filter(r => {
+    const catLabel = (HOT20_PG_LABEL[r.pgCode] || '').toLowerCase();
+    return r.storeName.toLowerCase().includes(query) ||
+           r.brandName.toLowerCase().includes(query) ||
+           catLabel.includes(query);
+  });
   const cnt = document.getElementById('nbResultCount');
-  if (cnt) cnt.textContent = (query || cu !== '전체' || nb4dActive) ? rows.length + '건' : '';
+  if (cnt) cnt.textContent = (query || cu !== '전체' || nb4dActive || nbGradeFilter !== '전체') ? rows.length + '건' : '';
   renderNbTable(rows);
 }
 
@@ -5353,6 +5402,15 @@ function buildNewBrandData() {
     const storeId   = String(store.id);
     const storeBrands = brandMap[storeId];
     if (!storeBrands) return;
+
+    // 점포별 bcdg_brands → brandCode 기반 grade 맵 구성 (1회)
+    const storeBcdg  = (DATA[store.name] && DATA[store.name].bcdg_brands) || {};
+    const gradeMap   = {};
+    Object.values(storeBcdg).forEach(pg => {
+      (pg.list || []).forEach(x => {
+        if (x.brandCode) gradeMap[x.brandCode] = x.grade || '-';
+      });
+    });
 
     Object.entries(storeBrands).forEach(([pgCode, brands]) => {
       if (!Array.isArray(brands)) return;
@@ -5397,6 +5455,8 @@ function buildNewBrandData() {
           brandCode : b.brandCode,
           brandName : b.brandName,
           cu,
+          pgCode,
+          grade     : gradeMap[b.brandCode] || '-',
           cy        : b.cy,
           cy4d      : b.cy4d ?? null,
           areaSales,
@@ -5423,9 +5483,15 @@ function renderNbTable(rows) {
 
   // ── 정렬 ──
   if (nbSortCol) {
+    const GRADE_ORDER = { 'S':0, 'A':1, 'B':2, 'C':3, 'F':4, '-':5 };
     rows = [...rows].sort((a, b) => {
       const av = a[nbSortCol];
       const bv = b[nbSortCol];
+      if (nbSortCol === 'grade') {
+        const ai = GRADE_ORDER[av ?? '-'] ?? 5;
+        const bi = GRADE_ORDER[bv ?? '-'] ?? 5;
+        return nbSortDir === 'asc' ? ai - bi : bi - ai;
+      }
       if (av == null && bv == null) return 0;
       if (av == null) return 1;
       if (bv == null) return -1;
@@ -5434,7 +5500,7 @@ function renderNbTable(rows) {
   }
 
   // ── 헤더 화살표 갱신 ──
-  const SORT_COLS = { cy: 7, areaSales: 8, areaSize: 9, workDays: 10 };
+  const SORT_COLS = { grade: 5, cy: 9, areaSales: 10, areaSize: 11, workDays: 12 };
   const thead = document.querySelector('#nbModal .nb-table thead tr');
   if (thead) {
     [...thead.querySelectorAll('th')].forEach((th, i) => {
@@ -5447,16 +5513,24 @@ function renderNbTable(rows) {
   }
 
   if (!rows.length) {
-    tbody.innerHTML = `<tr><td colspan="10" class="nb-empty">신규브랜드 데이터가 없습니다.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="12" class="nb-empty">신규브랜드 데이터가 없습니다.</td></tr>`;
     return;
   }
 
   tbody.innerHTML = rows.map((r, i) => {
     const rank    = i + 1;
     const rankCls = rank <= 3 ? 'nb-rank nb-rank-top' : 'nb-rank';
+    const g         = r.grade || '-';
+    const gradeCls  = 'grade-' + (g === '-' ? '' : g);
+    const gradeBadge = `<span class="grade-badge ${gradeCls}">${g}</span>`;
     const cuBadge = r.cu === 'F'
       ? `<span class="nb-cu-badge cu-f">의류 F</span>`
       : `<span class="nb-cu-badge">특정 B</span>`;
+    const catLabel = HOT20_PG_LABEL[r.pgCode] || '-';
+    const catCls   = r.cu === 'F' ? 'nb-cat-badge cat-f' : 'nb-cat-badge';
+    const catBadge = catLabel !== '-'
+      ? `<span class="${catCls}">${catLabel}</span>`
+      : `<span style="color:var(--text-muted)">-</span>`;
     const area    = r.areaSales != null ? fmtMoney(r.areaSales, 'area') : '-';
     const sizeTxt = r.areaSize  != null ? r.areaSize + '평' : '-';
     const daysTxt = r.workDays  != null ? r.workDays + '일' : '-';
@@ -5465,8 +5539,10 @@ function renderNbTable(rows) {
       <td>${r.storeName}</td>
       <td style="color:var(--text-muted);font-size:11px">${r.bonbu}</td>
       <td style="color:var(--text-muted)">${r.floor}</td>
+      <td>${gradeBadge}</td>
       <td>${r.brandName}</td>
       <td>${cuBadge}</td>
+      <td>${catBadge}</td>
       <td style="font-feature-settings:'tnum' 1;font-weight:600">${fmtMoney(r.cy)}</td>
       <td style="font-feature-settings:'tnum' 1;color:var(--text-muted)">${area}</td>
       <td style="color:var(--text-muted)">${sizeTxt}</td>
@@ -6147,8 +6223,6 @@ function restoreAreaFloorList() {
   bBody.innerHTML = _areaFloorListHTML;
 }
 
-// ────────────────────────────────────────────────────────────────
-
 function openBrandModal(store, cuCode, pgCode, pgLabel) {
   const bOverlay = document.getElementById('brandOverlay');
   const bBody    = document.getElementById('bBody');
@@ -6487,9 +6561,7 @@ document.getElementById('today').textContent =
   `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
 
 // 비동기 초기화: 구글시트 → 캐시 → 더미 순서
-// ───────────────────────────────────────────────────────────────
 //  스켈레톤 UI 제어
-// ───────────────────────────────────────────────────────────────
 function showSkeleton() {
   const sk = document.getElementById('skeletonWrap');
   const ts = document.querySelector('.table-shell');
@@ -6682,7 +6754,6 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-// ★ v34: 점포 KPI 팝업 — 매출성장률 대항목 행 클릭 시 오픈
 function openStoreKpiPopup(store) {
   const sid     = String(store.id).trim();
   const d       = DATA[store.name] || {};
@@ -6816,8 +6887,6 @@ function openStoreKpiPopup(store) {
   document.getElementById('storeKpiOverlay').classList.add('open');
 }
 
-
-// ═══════════════════════════════════════════════════════════════
 (function() {
   const isDebug = new URLSearchParams(window.location.search).get('debug') === '1';
   if (!isDebug) return;
