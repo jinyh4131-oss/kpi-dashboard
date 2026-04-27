@@ -663,6 +663,33 @@ body {
   font-size: 18px; cursor: pointer; padding: 0; line-height: 1;
 }
 .hist-close:hover { color: #fff; }
+/* KPI 탭 바 (v39) */
+.hist-kpi-bar {
+  padding: 8px 22px; display: flex; gap: 4px; align-items: center;
+  border-bottom: 1px solid var(--border); background: var(--surface);
+  flex-shrink: 0; flex-wrap: wrap;
+}
+.hist-kpi-btn {
+  font-family: var(--font); font-size: 12px; font-weight: 600;
+  padding: 6px 14px; border-radius: 6px;
+  border: 1px solid transparent; background: transparent;
+  color: var(--text-muted); cursor: pointer; transition: all 0.13s;
+  letter-spacing: -0.2px;
+}
+.hist-kpi-btn:hover { color: var(--accent); background: var(--surface2); }
+.hist-kpi-btn.active {
+  background: var(--accent); color: #fff; border-color: var(--accent);
+}
+/* 탭 플레이스홀더 */
+.hist-placeholder {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 80px 20px; color: var(--text-muted);
+  background: var(--surface2); margin: 16px 22px; border-radius: 8px;
+  border: 1px dashed var(--border);
+}
+.hist-placeholder-icon { font-size: 32px; margin-bottom: 12px; opacity: 0.7; }
+.hist-placeholder-title { font-size: 14px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; }
+.hist-placeholder-sub { font-size: 11px; color: var(--text-muted); }
 /* 월 탭 */
 .hist-month-bar {
   padding: 8px 22px; display: flex; gap: 5px; align-items: center;
@@ -691,13 +718,92 @@ body {
 }
 .hist-filter-btn:hover { border-color: var(--accent); color: var(--accent); }
 .hist-filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+/* v43: 점포 선택 바 (항상 표시 — 본부 필터와 공존) */
+.hist-compare-bar {
+  padding: 7px 22px; display: flex; gap: 6px; align-items: center;
+  border-bottom: 1px solid var(--border); background: var(--surface);
+  flex-shrink: 0; flex-wrap: wrap;
+}
+.hist-compare-bar .label {
+  font-size: 11px; color: var(--text-muted); margin-right: 2px;
+}
+.hist-compare-select {
+  font-family: var(--font); font-size: 11px;
+  padding: 3px 8px; border-radius: 5px;
+  border: 1px solid var(--border); background: var(--surface2);
+  color: var(--text); cursor: pointer; min-width: 140px;
+}
+.hist-compare-select:focus { outline: none; border-color: var(--accent); }
+.hist-compare-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 500;
+  padding: 3px 4px 3px 9px; border-radius: 11px;
+  color: #fff;
+}
+.hist-compare-chip .x {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 15px; height: 15px; border-radius: 50%;
+  background: rgba(255,255,255,0.25); cursor: pointer;
+  font-size: 10px; line-height: 1;
+}
+.hist-compare-chip .x:hover { background: rgba(255,255,255,0.45); }
+.hist-compare-hint {
+  font-size: 10px; color: var(--text-muted); margin-left: 4px;
+}
 /* 차트 */
 .hist-chart-wrap {
   padding: 14px 22px 8px; flex-shrink: 0;
   border-bottom: 1px solid var(--border);
+  position: relative;  /* v39-step1b: 툴팁 기준점 */
 }
 .hist-chart-title { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; font-weight: 500; }
 .hist-chart-svg { width: 100%; overflow: visible; }
+/* v39-step1b: 차트 호버 툴팁 */
+.hist-tooltip {
+  position: absolute; pointer-events: none; z-index: 10;
+  background: rgba(15,23,42,0.96); color: #fff;
+  padding: 8px 11px; border-radius: 6px;
+  font-size: 11px; line-height: 1.55; letter-spacing: -0.2px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.22);
+  min-width: 200px; max-width: 300px;
+  opacity: 0; transition: opacity 0.12s;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+.hist-tooltip.show { opacity: 1; }
+.hist-tooltip-label { font-size: 11px; font-weight: 600; color: #e2e8f4; margin-bottom: 4px; }
+.hist-tooltip-hr { height: 0.5px; background: rgba(148,163,184,0.3); margin: 4px 0; }
+.hist-tooltip-row { display: flex; justify-content: space-between; gap: 10px; font-variant-numeric: tabular-nums; }
+.hist-tooltip-name { color: #93c5fd; font-size: 10px; }
+.hist-tooltip-val { color: #fff; font-weight: 600; font-size: 11px; }
+.hist-tooltip-val.pos { color: #6ee7b7; }
+.hist-tooltip-val.neg { color: #fca5a5; }
+.hist-tooltip-sub { font-size: 10px; color: #94a3b8; margin-top: 2px; }
+/* v41: 2열 그리드 툴팁 행 (점포명 | 성장률 | 실적) */
+.hist-tt-row {
+  display: grid;
+  grid-template-columns: 110px 56px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  padding: 2px 0;
+  font-variant-numeric: tabular-nums;
+}
+.hist-tt-name {
+  font-size: 11px; font-weight: 500;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  min-width: 0;
+}
+.hist-tt-pct {
+  font-size: 11px; font-weight: 600; text-align: right;
+  min-width: 0;
+}
+.hist-tt-pct.pos { color: #6ee7b7; }
+.hist-tt-pct.neg { color: #fca5a5; }
+.hist-tt-amt {
+  font-size: 10px; color: #cbd5e1; text-align: right;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  min-width: 0;
+}
 /* 테이블 */
 .hist-body { overflow-y: auto; flex: 1; }
 .hist-table {
@@ -722,6 +828,57 @@ body {
 }
 .hist-bonbu-row td:first-child { padding-left: 22px; }
 .hist-no-data { text-align: center; padding: 40px; color: var(--text-muted); font-size: 13px; }
+
+/* v44: 점포 행 클릭 확장 */
+.hist-store-row { cursor: pointer; transition: background .12s; }
+.hist-store-row:hover td:first-child { color: var(--accent); }
+.hist-store-row .hist-arrow { display: inline-block; width: 10px; color: var(--text-dim); margin-right: 4px; transition: transform .15s; }
+.hist-store-row.open { background: var(--accent-bg); }
+.hist-store-row.open td:first-child { color: var(--accent); font-weight: 600; }
+.hist-store-row.open .hist-arrow { color: var(--accent); transform: rotate(90deg); }
+.hist-detail-row td { padding: 0 !important; background: var(--surface2); border-bottom: 0.5px solid var(--border); }
+.hist-detail-box {
+  padding: 14px 18px 14px 36px;
+  display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px;
+  align-items: stretch;
+}
+.hist-detail-head {
+  grid-column: 1 / -1;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 12px;
+}
+.hist-detail-head .hd-name { font-weight: 600; font-size: 13px; }
+.hist-detail-head .hd-meta { color: var(--text-muted); margin-left: 8px; font-size: 11px; }
+.hist-detail-head .hd-close {
+  font-size: 11px; color: var(--text-dim); cursor: pointer;
+  padding: 2px 8px; border-radius: 4px;
+}
+.hist-detail-head .hd-close:hover { background: var(--surface); color: var(--accent); }
+.hist-mini-chart {
+  background: var(--surface); border: 0.5px solid var(--border);
+  border-radius: 6px; padding: 10px 12px;
+}
+.hist-mini-chart .hmc-title { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+.hist-mini-chart svg { width: 100%; height: 90px; display: block; }
+.hist-mini-chart .hmc-legend { display: flex; gap: 12px; font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+.hist-mini-chart .hmc-legend span { display: inline-flex; align-items: center; gap: 4px; }
+.hist-mini-chart .hmc-legend i { display: inline-block; width: 10px; height: 2px; }
+.hist-kpi-grid { display: flex; flex-direction: column; gap: 5px; }
+.hist-kpi-mini {
+  background: var(--surface); border: 0.5px solid var(--border);
+  border-radius: 6px; padding: 7px 10px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 11px;
+}
+.hist-kpi-mini .hkm-label { color: var(--text-muted); }
+.hist-kpi-mini .hkm-val   { font-size: 13px; font-weight: 600; }
+.hist-detail-insight {
+  grid-column: 1 / -1;
+  margin-top: 4px; padding: 7px 12px;
+  background: var(--accent-bg); color: var(--accent);
+  border-radius: 6px; font-size: 11.5px;
+  display: none;  /* Step 5 이상치 감지 로직 완성 후 활성화 */
+}
 
 /* ─── CU 팝업 (의류F / 특정B 공통) ─── */
 .cu-overlay {
@@ -2292,15 +2449,23 @@ td.total-cell:hover { background: #dbeafe !important; }
   <button class="btn-expand" id="expandBtn" onclick="toggleAll()">전체 펼치기</button>
 </div>
 
-<!-- SALES HISTORY MODAL -->
+<!-- SALES HISTORY MODAL (v39: 5개 KPI 탭 구조) -->
 <div class="hist-overlay" id="histOverlay" onclick="if(event.target===this)closeHistModal()">
   <div class="hist-modal">
     <div class="hist-header">
       <div>
-        <div class="hist-title">📈 매출 실적 히스토리</div>
+        <div class="hist-title">📈 경영 히스토리</div>
         <div class="hist-subtitle" id="histSubtitle">monthly_history 기준</div>
       </div>
       <button class="hist-close" onclick="closeHistModal()">✕</button>
+    </div>
+    <!-- KPI 탭 바 (v39) -->
+    <div class="hist-kpi-bar" id="histKpiBar">
+      <button class="hist-kpi-btn active" data-kpi="sales"   onclick="setHistKpiTab('sales',this)">매출성장률</button>
+      <button class="hist-kpi-btn"        data-kpi="profit"  onclick="setHistKpiTab('profit',this)">영업이익</button>
+      <button class="hist-kpi-btn"        data-kpi="bcd"     onclick="setHistKpiTab('bcd',this)">BCD</button>
+      <button class="hist-kpi-btn"        data-kpi="area"    onclick="setHistKpiTab('area',this)">평당매출</button>
+      <button class="hist-kpi-btn"        data-kpi="vacancy" onclick="setHistKpiTab('vacancy',this)">공실</button>
     </div>
     <!-- 월 선택 탭 -->
     <div class="hist-month-bar" id="histMonthBar"></div>
@@ -2314,26 +2479,43 @@ td.total-cell:hover { background: #dbeafe !important; }
       <button class="hist-filter-btn" onclick="setHistFilter('4본부',this)">4본부</button>
       <button class="hist-filter-btn" onclick="setHistFilter('자산재설계',this)">자산재설계</button>
     </div>
-    <!-- 라인 차트 -->
-    <div class="hist-chart-wrap">
-      <div class="hist-chart-title">성장률 추이 (%)</div>
-      <svg class="hist-chart-svg" id="histChartSvg" height="120"></svg>
+    <!-- v43: 점포 선택 바 (항상 표시 - 본부 필터와 공존) -->
+    <div class="hist-compare-bar" id="histCompareBar">
+      <span class="label">점포</span>
+      <select class="hist-compare-select" id="histCompareSelect" onchange="addHistCompareStore(this)">
+        <option value="">-- 점포 선택 --</option>
+      </select>
+      <div id="histCompareChips" style="display:inline-flex;gap:4px;flex-wrap:wrap;"></div>
+      <span class="hist-compare-hint">최대 3개까지 선택</span>
     </div>
-    <!-- 테이블 -->
-    <div class="hist-body">
-      <table class="hist-table">
-        <thead>
-          <tr>
-            <th>점포명</th>
-            <th>목표 (백만)</th>
-            <th>실적 (백만)</th>
-            <th>전년 (백만)</th>
-            <th>달성율</th>
-            <th>성장율</th>
-          </tr>
-        </thead>
-        <tbody id="histTableBody"></tbody>
-      </table>
+    <!-- 탭별 콘텐츠 영역 (v39) -->
+    <div id="histTabContent" style="display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;">
+      <!-- 매출성장률 탭 (기본 활성) -->
+      <div class="hist-tab-pane" data-pane="sales" style="display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;">
+        <!-- 라인 차트 -->
+        <div class="hist-chart-wrap">
+          <div class="hist-chart-title">성장률 추이 (%)</div>
+          <svg class="hist-chart-svg" id="histChartSvg" height="180"></svg>
+          <div class="hist-tooltip" id="histChartTooltip"></div>
+        </div>
+        <!-- 테이블 -->
+        <div class="hist-body">
+          <table class="hist-table">
+            <thead>
+              <tr>
+                <th>점포명</th>
+                <th>목표 (백만)</th>
+                <th>실적 (백만)</th>
+                <th>전년 (백만)</th>
+                <th>달성율</th>
+                <th>성장율</th>
+              </tr>
+            </thead>
+            <tbody id="histTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <!-- 나머지 4개 탭은 Step 2~3에서 추가 -->
     </div>
   </div>
 </div>
@@ -2874,8 +3056,10 @@ function applySheetData(sheetResult) {
   // 점포정보 갱신
   ALL_STORES.length = 0;
   stores.forEach(s => {
+    const sid = String(s.store_id || '').trim();
+    if (!sid || sid === '8226') return;  // v46: 빈 store_id 방어 + 논현점(폐점) 메인 표시 제외
     ALL_STORES.push({
-      id: String(s.store_id),
+      id: sid,
       name: s.store_name,
       region: s.region,
       bonbu: s.bonbu,
@@ -4318,10 +4502,29 @@ function rebuildWithStores(stores) {
   });
 }
 
-// ─── 매출 히스토리 팝업 ───
+// ─── 매출 히스토리 팝업 (v39: 5개 KPI 탭 구조) ───
 
 let histCurrentMonth = '';
 let histCurrentFilter = '전체';
+let histCurrentKpi = 'sales';  // v39: sales | profit | bcd | area | vacancy
+// v43: 점포 비교 (본부 필터와 공존)
+let histSelectedStores = [];   // 선택된 store_id 배열 (최대 3개)
+// 색상: 본부는 주황 고정, 점포 3개는 민트/보라/핑크
+const HIST_COMPARE_COLORS = ['#10b981', '#8b5cf6', '#ec4899']; // 민트/보라/핑크
+const HIST_BONBU_COLOR   = '#f59e0b'; // 주황 (본부 필터 전용)
+const HIST_ALL_COLOR     = '#3b82f6'; // 파랑 (전체)
+
+// v44: 점포 행 클릭 확장 (다중 동시 펼침 허용)
+let histExpandedStores = new Set();
+
+// v39: KPI 탭별 라벨 맵 (Step 2~에서 활용)
+const HIST_KPI_LABELS = {
+  sales:   { title: '📈 경영 히스토리 · 매출성장률',  name: '매출성장률' },
+  profit:  { title: '📈 경영 히스토리 · 영업이익',    name: '영업이익' },
+  bcd:     { title: '📈 경영 히스토리 · BCD',         name: 'BCD' },
+  area:    { title: '📈 경영 히스토리 · 평당매출',    name: '평당매출' },
+  vacancy: { title: '📈 경영 히스토리 · 공실',        name: '공실' }
+};
 
 function closeHistModal() {
   document.getElementById('histOverlay').classList.remove('open');
@@ -4329,6 +4532,23 @@ function closeHistModal() {
 
 async function openHistModal() {
   document.getElementById('histOverlay').classList.add('open');
+
+  // v39: KPI 탭 초기화 (매출성장률)
+  histCurrentKpi = 'sales';
+  document.querySelectorAll('.hist-kpi-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.kpi === 'sales');
+  });
+  const titleEl = document.querySelector('#histOverlay .hist-title');
+  if (titleEl) titleEl.textContent = HIST_KPI_LABELS.sales.title;
+
+  // v43: 점포 선택 초기화 (모달 오픈 시 기본 초기화)
+  histSelectedStores = [];
+  renderHistCompareChips();
+  populateHistCompareSelect();
+
+  // v44: 점포 확장 상태 초기화
+  histExpandedStores.clear();
+
   document.getElementById('histTableBody').innerHTML =
     '<tr><td colspan="6" class="hist-no-data">데이터 불러오는 중...</td></tr>';
   document.getElementById('histMonthBar').innerHTML = '';
@@ -4349,6 +4569,18 @@ async function openHistModal() {
 
   renderHistMonthBar(months);
   renderHistContent(data);
+}
+
+// v39: KPI 탭 전환
+function setHistKpiTab(kpi, btn) {
+  histCurrentKpi = kpi;
+  document.querySelectorAll('.hist-kpi-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // 헤더 타이틀 업데이트
+  const titleEl = document.querySelector('#histOverlay .hist-title');
+  if (titleEl && HIST_KPI_LABELS[kpi]) titleEl.textContent = HIST_KPI_LABELS[kpi].title;
+  // 콘텐츠 재렌더링
+  renderHistContent(window.HISTORY_CACHE);
 }
 
 function renderHistMonthBar(months) {
@@ -4374,8 +4606,85 @@ function setHistFilter(filter, btn) {
   renderHistContent(window.HISTORY_CACHE);
 }
 
+// v43: 드롭다운 옵션 채우기 (이미 선택된 점포는 제외, 논현점 8226 제외)
+function populateHistCompareSelect() {
+  const sel = document.getElementById('histCompareSelect');
+  if (!sel) return;
+  const selectedSet = new Set(histSelectedStores.map(String));
+  const opts = ['<option value="">-- 점포 선택 --</option>'];
+  ALL_STORES.forEach(s => {
+    if (String(s.id) === '8226') return; // 논현점 폐점 제외
+    if (selectedSet.has(String(s.id))) return;
+    opts.push(`<option value="${s.id}">${s.name}</option>`);
+  });
+  sel.innerHTML = opts.join('');
+}
+
+// v40: 점포 추가
+function addHistCompareStore(selEl) {
+  const id = selEl.value;
+  if (!id) return;
+  if (histSelectedStores.length >= 3) {
+    alert('최대 3개까지 선택 가능합니다.');
+    selEl.value = '';
+    return;
+  }
+  if (!histSelectedStores.includes(id)) histSelectedStores.push(id);
+  selEl.value = '';
+  populateHistCompareSelect();
+  renderHistCompareChips();
+  renderHistContent(window.HISTORY_CACHE);
+}
+
+// v40: 점포 제거
+function removeHistCompareStore(id) {
+  histSelectedStores = histSelectedStores.filter(x => x !== String(id));
+  populateHistCompareSelect();
+  renderHistCompareChips();
+  renderHistContent(window.HISTORY_CACHE);
+}
+
+// v40: 선택된 점포 칩 렌더링
+function renderHistCompareChips() {
+  const box = document.getElementById('histCompareChips');
+  if (!box) return;
+  if (!histSelectedStores.length) { box.innerHTML = ''; return; }
+  box.innerHTML = histSelectedStores.map((id, i) => {
+    const s = ALL_STORES.find(x => String(x.id) === String(id));
+    const name = s ? s.name : id;
+    const color = HIST_COMPARE_COLORS[i] || '#6b7280';
+    return `<span class="hist-compare-chip" style="background:${color}">${name}<span class="x" onclick="removeHistCompareStore('${id}')">✕</span></span>`;
+  }).join('');
+}
+
 function renderHistContent(data) {
   if (!data || !histCurrentMonth) return;
+
+  // v39: 탭 pane 표시 전환 (sales 탭만 현재 구현, 나머지는 플레이스홀더)
+  const tabContent = document.getElementById('histTabContent');
+  if (!tabContent) return;
+
+  // 기존 pane 제거 (sales pane 제외)
+  tabContent.querySelectorAll('.hist-tab-pane').forEach(pane => {
+    if (pane.dataset.pane !== 'sales') pane.remove();
+  });
+  const salesPane = tabContent.querySelector('.hist-tab-pane[data-pane="sales"]');
+
+  if (histCurrentKpi === 'sales') {
+    // 매출성장률 탭: 기존 로직
+    if (salesPane) salesPane.style.display = 'flex';
+    renderSalesTab(data);
+  } else {
+    // 다른 탭: sales pane 숨기고 플레이스홀더 표시
+    if (salesPane) salesPane.style.display = 'none';
+    renderPlaceholderTab(histCurrentKpi);
+    // 서브타이틀만 업데이트
+    updateHistSubtitle(data);
+  }
+}
+
+// v39: 매출성장률 탭 렌더링 (기존 renderHistContent 로직)
+function renderSalesTab(data) {
   const monthData = data[histCurrentMonth] || {};
 
   // 필터 적용된 점포 목록
@@ -4396,9 +4705,14 @@ function renderHistContent(data) {
   let html = '';
 
   // 전체 합계 행
-  const allCy  = filtered.reduce((sum,s) => sum + (monthData[String(s.id)]?.sales_cy  || 0), 0);
-  const allPy  = filtered.reduce((sum,s) => sum + (monthData[String(s.id)]?.sales_py  || 0), 0);
-  const allTgt = filtered.reduce((sum,s) => sum + (monthData[String(s.id)]?.target    || 0), 0);
+  // ★ v38-histfix2: 전체 필터일 땐 monthData 전체 순회 (폐점 포함 → 로우데이터와 일치)
+  //                 본부 필터일 땐 해당 본부 점포만 합산 (기존과 동일)
+  const sumKeys = histCurrentFilter === '전체'
+    ? Object.keys(monthData)
+    : filtered.map(s => String(s.id));
+  const allCy  = sumKeys.reduce((sum,sid) => sum + (monthData[sid]?.sales_cy || 0), 0);
+  const allPy  = sumKeys.reduce((sum,sid) => sum + (monthData[sid]?.sales_py || 0), 0);
+  const allTgt = sumKeys.reduce((sum,sid) => sum + (monthData[sid]?.target   || 0), 0);
   html += histTotalRow('합계', allTgt, allCy, allPy);
 
   const bonbuList = histCurrentFilter === '전체' ? BONBU_ORDER : [histCurrentFilter];
@@ -4415,7 +4729,11 @@ function renderHistContent(data) {
     // 점포별
     stores.forEach(s => {
       const d = monthData[String(s.id)];
-      html += histStoreRow(s.name, d?.target ?? null, d?.sales_cy ?? null, d?.sales_py ?? null);
+      html += histStoreRow(s.id, s.name, d?.target ?? null, d?.sales_cy ?? null, d?.sales_py ?? null);
+      // v44: 펼쳐진 점포면 상세 행 삽입
+      if (histExpandedStores.has(String(s.id))) {
+        html += histStoreDetailRow(s, data);
+      }
     });
   });
 
@@ -4425,6 +4743,31 @@ function renderHistContent(data) {
   renderHistChart(data, filtered);
 
   // 서브타이틀
+  updateHistSubtitle(data);
+}
+
+// v39: 플레이스홀더 탭 (Step 2~3에서 대체됨)
+function renderPlaceholderTab(kpi) {
+  const tabContent = document.getElementById('histTabContent');
+  const label = (HIST_KPI_LABELS[kpi] || {}).name || kpi;
+  const pane = document.createElement('div');
+  pane.className = 'hist-tab-pane';
+  pane.dataset.pane = kpi;
+  pane.style.cssText = 'display:flex;flex-direction:column;flex:1;min-height:0;overflow:auto;';
+  pane.innerHTML = `
+    <div class="hist-placeholder">
+      <div class="hist-placeholder-icon">🚧</div>
+      <div class="hist-placeholder-title">${label} 히스토리 준비 중</div>
+      <div class="hist-placeholder-sub">다음 단계(Step 2~3)에서 추가 예정입니다.</div>
+    </div>`;
+  tabContent.appendChild(pane);
+}
+
+// v39: 서브타이틀 업데이트 (공용)
+function updateHistSubtitle(data) {
+  const filtered = histCurrentFilter === '전체'
+    ? ALL_STORES
+    : ALL_STORES.filter(s => s.bonbu === histCurrentFilter);
   const mm = parseInt(histCurrentMonth.slice(5,7));
   document.getElementById('histSubtitle').textContent =
     `${histCurrentMonth.slice(0,4)}년 ${mm}월 기준 · ${filtered.length}개 점포`;
@@ -4468,15 +4811,138 @@ function histBonbuRow(bonbu, tgt, cy, py) {
     ${histFmtRate(cy, py)}
   </tr>`;
 }
-function histStoreRow(name, tgt, cy, py) {
-  return `<tr>
-    <td style="padding-left:36px">${name}</td>
+function histStoreRow(storeId, name, tgt, cy, py) {
+  const isOpen = histExpandedStores.has(String(storeId));
+  const arrow = isOpen ? '▾' : '▸';
+  const cls = 'hist-store-row' + (isOpen ? ' open' : '');
+  return `<tr class="${cls}" onclick="toggleHistStoreDetail('${storeId}')">
+    <td style="padding-left:36px"><span class="hist-arrow">${arrow}</span>${name}</td>
     <td>${histFmtNum(tgt)}</td>
     <td>${histFmtNum(cy)}</td>
     <td>${histFmtNum(py)}</td>
     ${histFmtAchieve(cy, tgt)}
     ${histFmtRate(cy, py)}
   </tr>`;
+}
+
+// v44: 점포 클릭 토글 (다중 동시 펼침 허용)
+function toggleHistStoreDetail(storeId) {
+  const sid = String(storeId);
+  if (histExpandedStores.has(sid)) histExpandedStores.delete(sid);
+  else histExpandedStores.add(sid);
+  // 매출 탭만 재렌더 (다른 탭은 영향 없음)
+  if (histCurrentKpi === 'sales' && window.HISTORY_CACHE) {
+    renderSalesTab(window.HISTORY_CACHE);
+  }
+}
+
+// v44: 점포 상세 행 (좌: 미니 추세선 / 우: KPI 4개 / 하: 인사이트 자리)
+function histStoreDetailRow(store, data) {
+  const sid = String(store.id);
+  const months = Object.keys(data).sort();
+  const cur = data[histCurrentMonth]?.[sid] || {};
+
+  // 최근 6개월 추출 (현재 월 포함, 그 이전 5개월)
+  const idx = months.indexOf(histCurrentMonth);
+  const start = Math.max(0, idx - 5);
+  const recent = months.slice(start, idx + 1);
+
+  const cyArr = recent.map(m => (data[m]?.[sid]?.sales_cy ?? null));
+  const pyArr = recent.map(m => (data[m]?.[sid]?.sales_py ?? null));
+
+  // 미니 SVG 차트 (현재 월 강조)
+  const W = 320, H = 100, PAD = {t:8, b:18, l:8, r:8};
+  const innerW = W - PAD.l - PAD.r, innerH = H - PAD.t - PAD.b;
+  const allVals = [...cyArr, ...pyArr].filter(v => v != null && v > 0);
+  let chartSvg;
+  if (allVals.length < 2) {
+    chartSvg = `<text x="${W/2}" y="${H/2}" text-anchor="middle" font-size="10" fill="#94a3b8">데이터 부족</text>`;
+  } else {
+    const vMax = Math.max(...allVals);
+    const vMin = Math.min(...allVals);
+    const range = vMax - vMin || 1;
+    const xStep = recent.length > 1 ? innerW / (recent.length - 1) : 0;
+    const toY = v => PAD.t + innerH - ((v - vMin) / range) * innerH;
+    const toX = i => PAD.l + i * xStep;
+
+    const buildPath = (arr, color, dash) => {
+      const pts = arr.map((v, i) => v != null ? `${toX(i)},${toY(v)}` : null).filter(Boolean).join(' ');
+      if (!pts) return '';
+      return `<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="1.6" ${dash ? 'stroke-dasharray="3,3"' : ''}/>`;
+    };
+    const buildDots = (arr, color) =>
+      arr.map((v, i) => v != null ? `<circle cx="${toX(i)}" cy="${toY(v)}" r="${i === arr.length-1 ? 3 : 2}" fill="${color}"/>` : '').join('');
+    const labels = recent.map((m, i) => {
+      const mm = parseInt(m.slice(5,7));
+      return `<text x="${toX(i)}" y="${H-4}" text-anchor="middle" font-size="9" fill="#94a3b8">${mm}월</text>`;
+    }).join('');
+
+    chartSvg = `
+      <line x1="${PAD.l}" y1="${PAD.t + innerH}" x2="${W-PAD.r}" y2="${PAD.t + innerH}" stroke="#e4e7ed" stroke-width="0.5"/>
+      ${buildPath(pyArr, '#888780', true)}
+      ${buildPath(cyArr, '#185FA5', false)}
+      ${buildDots(pyArr, '#888780')}
+      ${buildDots(cyArr, '#185FA5')}
+      ${labels}
+    `;
+  }
+
+  // 우측 KPI 카드 4개
+  const fmtMoney = v => v == null ? '-' : Math.round(v / 1000000).toLocaleString();
+  const fmtRate  = (cy, py) => {
+    if (!py || cy == null) return '-';
+    const r = (cy - py) / py * 100;
+    return (r > 0 ? '+' : '') + r.toFixed(1) + '%';
+  };
+  const rateClass = (cy, py) => {
+    if (!py || cy == null) return '';
+    const r = (cy - py) / py * 100;
+    return r > 0 ? 'tc-pos' : r < 0 ? 'tc-neg' : '';
+  };
+
+  const profitVal = cur.profit_cy != null
+    ? `<span class="hkm-val ${rateClass(cur.profit_cy, cur.profit_py)}">${fmtRate(cur.profit_cy, cur.profit_py)}</span>`
+    : `<span class="hkm-val">-</span>`;
+  const bcdVal    = cur.bcdg_total != null
+    ? `<span class="hkm-val">${Number(cur.bcdg_total).toFixed(1)}점</span>`
+    : `<span class="hkm-val">-</span>`;
+  const areaVal   = cur.area_total != null
+    ? `<span class="hkm-val">${Math.round(cur.area_total / 10000).toLocaleString()}만</span>`
+    : `<span class="hkm-val">-</span>`;
+  const vacVal    = cur.vac_total != null
+    ? `<span class="hkm-val ${cur.vac_total > 0 ? 'tc-warn' : ''}">${cur.vac_total}개</span>`
+    : `<span class="hkm-val">-</span>`;
+
+  const mm = parseInt(histCurrentMonth.slice(5,7));
+
+  return `<tr class="hist-detail-row"><td colspan="6">
+    <div class="hist-detail-box">
+      <div class="hist-detail-head">
+        <div>
+          <span class="hd-name">${store.name}</span>
+          <span class="hd-meta">${store.id} · ${store.bonbu || '-'}</span>
+        </div>
+        <span class="hd-close" onclick="event.stopPropagation();toggleHistStoreDetail('${sid}')">✕ 접기</span>
+      </div>
+      <div class="hist-mini-chart">
+        <div class="hmc-title">최근 ${recent.length}개월 매출 추이 (백만원)</div>
+        <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${chartSvg}</svg>
+        <div class="hmc-legend">
+          <span><i style="background:#185FA5"></i>당년</span>
+          <span><i style="background:#888780"></i>전년</span>
+        </div>
+      </div>
+      <div class="hist-kpi-grid">
+        <div class="hist-kpi-mini"><span class="hkm-label">영업이익</span>${profitVal}</div>
+        <div class="hist-kpi-mini"><span class="hkm-label">BCD 등급</span>${bcdVal}</div>
+        <div class="hist-kpi-mini"><span class="hkm-label">평당매출</span>${areaVal}</div>
+        <div class="hist-kpi-mini"><span class="hkm-label">공실</span>${vacVal}</div>
+      </div>
+      <div class="hist-detail-insight" data-store="${sid}" data-month="${histCurrentMonth}">
+        💡 <span class="hdi-text">인사이트 (Step 5에서 활성화)</span>
+      </div>
+    </div>
+  </td></tr>`;
 }
 
 // ── 라인 차트 렌더링 ──
@@ -4488,28 +4954,56 @@ function renderHistChart(data, filteredStores) {
     return;
   }
 
-  // 전체 41개 성장률
-  const allLine = months.map(m => {
+  // v43: 본부 필터와 점포 선택은 독립적으로 공존
+  const selectedIds = histSelectedStores.map(String);
+  const showBonbu   = histCurrentFilter !== '전체';    // 본부 선택 시 본부 라인 표시
+  const showStores  = selectedIds.length > 0;          // 점포 선택 시 점포 라인들 표시
+
+  // v39-step1b + v40: 월별 원본 합계 저장 (툴팁에서 사용)
+  const monthStats = months.map(m => {
     const md = data[m] || {};
-    let cy = 0, py = 0;
-    ALL_STORES.forEach(s => { cy += md[String(s.id)]?.sales_cy || 0; py += md[String(s.id)]?.sales_py || 0; });
-    return py > 0 ? (cy - py) / py * 100 : null;
+    // 전체 (폐점 포함)
+    let allCy = 0, allPy = 0;
+    Object.keys(md).forEach(sid => {
+      allCy += md[sid]?.sales_cy || 0;
+      allPy += md[sid]?.sales_py || 0;
+    });
+    // 필터 (선택 본부) — 비교모드에서는 사용 안 함
+    let fltCy = 0, fltPy = 0;
+    filteredStores.forEach(s => {
+      fltCy += md[String(s.id)]?.sales_cy || 0;
+      fltPy += md[String(s.id)]?.sales_py || 0;
+    });
+    // v40: 선택 점포별 cy/py
+    const stores = {};
+    selectedIds.forEach(sid => {
+      stores[sid] = {
+        cy: md[sid]?.sales_cy || 0,
+        py: md[sid]?.sales_py || 0
+      };
+    });
+    return { month: m, allCy, allPy, fltCy, fltPy, stores };
   });
 
-  // 필터 성장률
-  const filterLine = months.map(m => {
-    const md = data[m] || {};
-    let cy = 0, py = 0;
-    filteredStores.forEach(s => { cy += md[String(s.id)]?.sales_cy || 0; py += md[String(s.id)]?.sales_py || 0; });
-    return py > 0 ? (cy - py) / py * 100 : null;
-  });
+  const allLine    = monthStats.map(s => s.allPy > 0 ? (s.allCy - s.allPy) / s.allPy * 100 : null);
+  const filterLine = monthStats.map(s => s.fltPy > 0 ? (s.fltCy - s.fltPy) / s.fltPy * 100 : null);
+  // v43: 선택 점포별 성장률 라인 (점포 선택 시에만 사용됨)
+  const storeLines = selectedIds.map(sid =>
+    monthStats.map(s => {
+      const st = s.stores[sid];
+      return (st && st.py > 0) ? (st.cy - st.py) / st.py * 100 : null;
+    })
+  );
 
-  const isSame = histCurrentFilter === '전체';
-  const allVals = [...allLine, ...filterLine].filter(v => v !== null);
+  // v43: y축 범위 — 전체 + 본부(있으면) + 선택 점포들
+  const valCollections = [allLine];
+  if (showBonbu)  valCollections.push(filterLine);
+  if (showStores) valCollections.push(...storeLines);
+  const allVals = valCollections.flat().filter(v => v !== null);
   if (!allVals.length) { svg.innerHTML = ''; return; }
 
   const W = svg.parentElement.clientWidth - 44;
-  const H = 110;
+  const H = 180;
   const PAD = { t: 12, b: 24, l: 36, r: 16 };
   const chartW = W - PAD.l - PAD.r;
   const chartH = H - PAD.t - PAD.b;
@@ -4549,29 +5043,255 @@ function renderHistChart(data, filteredStores) {
     vals.forEach((v, i) => {
       if (v === null) return;
       const x = xPos(i), y = yPos(v);
-      html += `<circle cx="${x}" cy="${y}" r="3.5" fill="${color}" stroke="#fff" stroke-width="1.5">
-        <title>${months[i].slice(5,7)}월: ${v > 0 ? '+' : ''}${v.toFixed(1)}%</title>
-      </circle>`;
+      html += `<circle cx="${x}" cy="${y}" r="3.5" fill="${color}" stroke="#fff" stroke-width="1.5"/>`;
     });
     return html;
   }
 
-  // 전체선 (파랑)
+  // 전체선 (파랑) — 항상 표시
   svgHtml += drawLine(allLine, '#3b82f6');
-  // 필터선 (주황) — 전체 필터면 숨김
-  if (!isSame) svgHtml += drawLine(filterLine, '#f59e0b', '');
 
-  // 범례
-  svgHtml += `<circle cx="${PAD.l}" cy="${PAD.t - 4}" r="4" fill="#3b82f6"/>
-    <text x="${PAD.l+8}" y="${PAD.t}" font-size="10" fill="#64748b">전체 41개점</text>`;
-  if (!isSame) {
-    svgHtml += `<circle cx="${PAD.l+90}" cy="${PAD.t - 4}" r="4" fill="#f59e0b"/>
-      <text x="${PAD.l+98}" y="${PAD.t}" font-size="10" fill="#64748b">${histCurrentFilter}</text>`;
+  // v43: 본부 라인 (주황) — 본부 선택된 경우만
+  if (showBonbu) svgHtml += drawLine(filterLine, HIST_BONBU_COLOR, '');
+  // v43: 선택 점포별 라인 (민트/보라/핑크)
+  if (showStores) {
+    storeLines.forEach((line, i) => {
+      svgHtml += drawLine(line, HIST_COMPARE_COLORS[i] || '#6b7280');
+    });
   }
+
+  // v43: 범례 — 전체 + 본부(선택 시) + 점포들(선택 시)
+  let lx = PAD.l;
+  svgHtml += `<circle cx="${lx}" cy="${PAD.t - 4}" r="4" fill="${HIST_ALL_COLOR}"/>
+    <text x="${lx+8}" y="${PAD.t}" font-size="10" fill="#64748b">전체 41개점</text>`;
+  lx += 90;
+  if (showBonbu) {
+    svgHtml += `<circle cx="${lx}" cy="${PAD.t - 4}" r="4" fill="${HIST_BONBU_COLOR}"/>
+      <text x="${lx+8}" y="${PAD.t}" font-size="10" fill="#64748b">${histCurrentFilter}</text>`;
+    lx += 16 + histCurrentFilter.length * 10;
+  }
+  if (showStores) {
+    selectedIds.forEach((sid, i) => {
+      const s = ALL_STORES.find(x => String(x.id) === sid);
+      const name = s ? s.name : sid;
+      const color = HIST_COMPARE_COLORS[i] || '#6b7280';
+      svgHtml += `<circle cx="${lx}" cy="${PAD.t - 4}" r="4" fill="${color}"/>
+        <text x="${lx+8}" y="${PAD.t}" font-size="10" fill="#64748b">${name}</text>`;
+      lx += 16 + name.length * 10;
+    });
+  }
+
+  // v39-step1b: 호버 가이드선 (초기엔 숨김)
+  svgHtml += `<line id="histHoverGuide" x1="0" y1="${PAD.t}" x2="0" y2="${PAD.t+chartH}"
+    stroke="#64748b" stroke-width="1" stroke-dasharray="3,3" opacity="0"/>`;
+  // v43: 호버 강조 원 — 전체 + 본부(선택 시) + 점포들(선택 시)
+  svgHtml += `<circle id="histHoverDotAll" cx="0" cy="0" r="5" fill="${HIST_ALL_COLOR}" stroke="#fff" stroke-width="2" opacity="0"/>`;
+  if (showBonbu) {
+    svgHtml += `<circle id="histHoverDotFlt" cx="0" cy="0" r="5" fill="${HIST_BONBU_COLOR}" stroke="#fff" stroke-width="2" opacity="0"/>`;
+  }
+  if (showStores) {
+    selectedIds.forEach((sid, i) => {
+      const color = HIST_COMPARE_COLORS[i] || '#6b7280';
+      svgHtml += `<circle id="histHoverDotStore${i}" cx="0" cy="0" r="5" fill="${color}" stroke="#fff" stroke-width="2" opacity="0"/>`;
+    });
+  }
+
+  // v39-step1b: 월별 투명 호버존 (마우스 감지용)
+  const hoverZoneW = chartW / (months.length - 1);
+  months.forEach((m, i) => {
+    const cx = xPos(i);
+    const zx = cx - hoverZoneW / 2;
+    svgHtml += `<rect x="${zx}" y="${PAD.t}" width="${hoverZoneW}" height="${chartH}"
+      fill="transparent" data-hist-idx="${i}" style="cursor:pointer"/>`;
+  });
 
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
   svg.setAttribute('height', H);
   svg.innerHTML = svgHtml;
+
+  // v43: 호버존 이벤트 바인딩 (본부/점포 독립 플래그 전달)
+  bindHistChartHover({
+    svg, months, monthStats, allLine, filterLine, storeLines, selectedIds,
+    xPos, yPos, PAD, chartW, chartH, showBonbu, showStores
+  });
+}
+
+// v43: 차트 호버 인터랙션 바인딩
+function bindHistChartHover(ctx) {
+  const { svg, selectedIds, showBonbu, showStores } = ctx;
+  const tooltip  = document.getElementById('histChartTooltip');
+  const guide    = document.getElementById('histHoverGuide');
+  const dotAll   = document.getElementById('histHoverDotAll');
+  const dotFlt   = document.getElementById('histHoverDotFlt');
+  if (!tooltip || !guide || !dotAll) return;
+
+  // 호버존 각각에 이벤트 (mouseenter/mouseleave)
+  const zones = svg.querySelectorAll('[data-hist-idx]');
+  zones.forEach(zone => {
+    zone.addEventListener('mouseenter', () => {
+      const i = parseInt(zone.dataset.histIdx);
+      showHistTooltip(i, ctx);
+    });
+    zone.addEventListener('mousemove', (e) => {
+      const i = parseInt(zone.dataset.histIdx);
+      positionHistTooltip(i, ctx);
+    });
+  });
+
+  // 차트 영역 밖으로 나가면 숨김
+  const wrap = svg.parentElement;
+  wrap.addEventListener('mouseleave', () => {
+    tooltip.classList.remove('show');
+    guide.setAttribute('opacity', '0');
+    dotAll.setAttribute('opacity', '0');
+    if (dotFlt) dotFlt.setAttribute('opacity', '0');
+    // v43: 점포 dot 숨김
+    if (showStores && selectedIds) {
+      selectedIds.forEach((_, i) => {
+        const d = document.getElementById(`histHoverDotStore${i}`);
+        if (d) d.setAttribute('opacity', '0');
+      });
+    }
+  });
+}
+
+// v43: 툴팁 표시 + 가이드선/강조원 위치 설정
+function showHistTooltip(idx, ctx) {
+  const { months, monthStats, allLine, filterLine, storeLines, selectedIds,
+          xPos, yPos, showBonbu, showStores } = ctx;
+  const tooltip = document.getElementById('histChartTooltip');
+  const guide   = document.getElementById('histHoverGuide');
+  const dotAll  = document.getElementById('histHoverDotAll');
+  const dotFlt  = document.getElementById('histHoverDotFlt');
+
+  const cx = xPos(idx);
+  // 가이드선
+  guide.setAttribute('x1', cx);
+  guide.setAttribute('x2', cx);
+  guide.setAttribute('opacity', '0.5');
+  // 강조 원 (전체)
+  if (allLine[idx] !== null) {
+    dotAll.setAttribute('cx', cx);
+    dotAll.setAttribute('cy', yPos(allLine[idx]));
+    dotAll.setAttribute('opacity', '1');
+  } else {
+    dotAll.setAttribute('opacity', '0');
+  }
+
+  // v43: 강조 원 (본부) — 본부 선택 시에만
+  if (showBonbu && dotFlt) {
+    if (filterLine[idx] !== null) {
+      dotFlt.setAttribute('cx', cx);
+      dotFlt.setAttribute('cy', yPos(filterLine[idx]));
+      dotFlt.setAttribute('opacity', '1');
+    } else {
+      dotFlt.setAttribute('opacity', '0');
+    }
+  }
+
+  // v43: 강조 원 (선택 점포별) — 점포 선택 시에만
+  if (showStores) {
+    (storeLines || []).forEach((line, i) => {
+      const dot = document.getElementById(`histHoverDotStore${i}`);
+      if (!dot) return;
+      if (line[idx] !== null) {
+        dot.setAttribute('cx', cx);
+        dot.setAttribute('cy', yPos(line[idx]));
+        dot.setAttribute('opacity', '1');
+      } else {
+        dot.setAttribute('opacity', '0');
+      }
+    });
+  }
+
+  // 툴팁 내용 구성
+  const stats = monthStats[idx];
+  const mm = parseInt(months[idx].slice(5,7));
+  const yy = months[idx].slice(0,4);
+  const allPct = allLine[idx];
+  const fltPct = filterLine[idx];
+
+  // v41: 성장률 셀 (정렬용)
+  const pctHtml = (v) => {
+    if (v === null || v === undefined) return '<span class="hist-tt-pct">-</span>';
+    const cls = v > 0 ? 'pos' : v < 0 ? 'neg' : '';
+    const sign = v > 0 ? '+' : '';
+    return `<span class="hist-tt-pct ${cls}">${sign}${v.toFixed(1)}%</span>`;
+  };
+  // v41: 실적 셀 — "cy / py억" 단축 표기
+  const amtHtml = (cy, py) => {
+    if (!cy && !py) return '<span class="hist-tt-amt">-</span>';
+    const cyB = Math.round((cy || 0) / 100000000).toLocaleString();
+    const pyB = Math.round((py || 0) / 100000000).toLocaleString();
+    return `<span class="hist-tt-amt">${cyB} / ${pyB}억</span>`;
+  };
+
+  let html = `<div class="hist-tooltip-label">📅 ${yy}-${String(mm).padStart(2,'0')} (${mm}월)</div>`;
+  html += `<div class="hist-tooltip-hr"></div>`;
+
+  // 전체 행 (항상 표시)
+  html += `<div class="hist-tt-row">
+    <span class="hist-tt-name" style="color:${HIST_ALL_COLOR}">● 전체 41개점</span>
+    ${pctHtml(allPct)}
+    ${amtHtml(stats.allCy, stats.allPy)}
+  </div>`;
+
+  // v43: 본부 행 (본부 선택 시)
+  if (showBonbu) {
+    html += `<div class="hist-tt-row">
+      <span class="hist-tt-name" style="color:${HIST_BONBU_COLOR}" title="${histCurrentFilter}">● ${histCurrentFilter}</span>
+      ${pctHtml(fltPct)}
+      ${amtHtml(stats.fltCy, stats.fltPy)}
+    </div>`;
+  }
+
+  // v43: 선택 점포별 행 (점포 선택 시)
+  if (showStores) {
+    selectedIds.forEach((sid, i) => {
+      const s = ALL_STORES.find(x => String(x.id) === sid);
+      const name = s ? s.name : sid;
+      const color = HIST_COMPARE_COLORS[i] || '#6b7280';
+      const st = stats.stores[sid] || { cy: 0, py: 0 };
+      html += `<div class="hist-tt-row">
+        <span class="hist-tt-name" style="color:${color}" title="${name}">● ${name}</span>
+        ${pctHtml(storeLines[i][idx])}
+        ${amtHtml(st.cy, st.py)}
+      </div>`;
+    });
+  }
+
+  tooltip.innerHTML = html;
+  tooltip.classList.add('show');
+
+  positionHistTooltip(idx, ctx);
+}
+
+// v39-step1b: 툴팁 위치 계산 (SVG 좌표 → 픽셀 좌표 변환 + 경계 처리)
+function positionHistTooltip(idx, ctx) {
+  const { svg, xPos } = ctx;
+  const tooltip = document.getElementById('histChartTooltip');
+  const wrap = svg.parentElement;
+
+  // SVG viewBox 좌표 → 실제 픽셀 좌표
+  const svgRect = svg.getBoundingClientRect();
+  const vbW = svg.viewBox.baseVal.width || svgRect.width;
+  const scale = svgRect.width / vbW;
+  const svgCx = xPos(idx) * scale;  // svg 내부 픽셀 x
+  const svgTop = svg.offsetTop;     // wrap 내부 top
+
+  const tipW = tooltip.offsetWidth;
+  const wrapW = wrap.clientWidth;
+  // 기본: 가이드선 오른쪽 12px
+  let left = svg.offsetLeft + svgCx + 12;
+  // 오른쪽 경계 넘으면 왼쪽으로
+  if (left + tipW > wrapW - 8) {
+    left = svg.offsetLeft + svgCx - tipW - 12;
+  }
+  // 위쪽 정렬
+  const top = svgTop + 8;
+
+  tooltip.style.left = Math.max(8, left) + 'px';
+  tooltip.style.top  = top + 'px';
 }
 
 // ─── 매출역성장 / 영업이익적자 팝업 ───
