@@ -2018,6 +2018,42 @@ td.total-cell:hover { background: #dbeafe !important; }
   border-bottom: 1px solid var(--border);
   margin-bottom: 12px;
 }
+/* 가중치 BCD 점수 + 등급 분포 표시 */
+.bcdg-score-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 4px 0 8px; gap: 12px;
+}
+.bcdg-score-main {
+  font-size: 18px; font-weight: 700; color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.bcdg-score-main b { color: var(--accent); }
+.bcdg-dist {
+  display: flex; gap: 6px; flex-wrap: wrap;
+  font-size: 11px; font-variant-numeric: tabular-nums;
+}
+.bcdg-dist-chip {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 2px 8px; border-radius: 10px;
+  background: #f8fafc; color: #64748b;
+}
+.bcdg-dist-chip.dS { background: #fef3c7; color: #92400e; }
+.bcdg-dist-chip.dA { background: #dcfce7; color: #166534; }
+.bcdg-dist-chip.dB { background: #dbeafe; color: #1e40af; }
+.bcdg-dist-chip.dC { background: #f1f5f9; color: #64748b; }
+.bcdg-dist-chip.dF { background: #fee2e2; color: #991b1b; }
+.bcdg-dist-chip.dN { background: #f8fafc; color: #94a3b8; }
+.bcdg-formula {
+  font-size: 10px; color: var(--text-dim);
+  padding: 2px 0 10px;
+}
+.bcdg-formula b { color: var(--text-muted); font-weight: 500; }
+/* 복종별 미니 점수 (전체 모드용) */
+.bcdg-pg-score {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-weight: 400; color: #94a3b8; font-size: 11px;
+}
+.bcdg-pg-score b { color: var(--text); font-weight: 600; }
 .bcdg-section-label {
   font-size: 11px; font-weight: 700;
   color: var(--text-muted); letter-spacing: 0.5px;
@@ -2805,6 +2841,7 @@ td.total-cell:hover { background: #dbeafe !important; }
         <thead>
           <tr>
             <th>점포명</th>
+            <th class="bs-sortable" onclick="bsSortBy('grade')"><span class="bs-arr">등급</span></th>
             <th>층</th>
             <th class="bs-sortable" onclick="bsSortBy('cy')"><span class="bs-arr">매출(cy)</span></th>
             <th class="bs-sortable" onclick="bsSortBy('py')"><span class="bs-arr">전년(py)</span></th>
@@ -3622,7 +3659,7 @@ function buildBody(stores) {
     } else {
       tdTotal.textContent = fmtVal(tv, tf);
     }
-    tdTotal.onclick = (e) => { e.stopPropagation(); openModal('전체 합계', kpi, null, tv, tf); };
+    // tdTotal.onclick — 추후 팝업 연결 예정 (옵션B 작업 시 복구)
     trP.appendChild(tdTotal);
 
     let lastRegP = null;
@@ -3662,9 +3699,8 @@ function buildBody(stores) {
         td.style.cursor = 'pointer';
         td.title = '점포 KPI 상세 보기';
         td.onclick = (e) => { e.stopPropagation(); openStoreKpiPopup(s); };
-      } else {
-        td.onclick = (e) => { e.stopPropagation(); openModal(s.name, kpi, null, v, fmt); };
       }
+      // else: 일반 KPI 셀 — 추후 팝업 연결 예정 (옵션B 작업 시 복구)
       trP.appendChild(td);
     });
     tbody.appendChild(trP);
@@ -3855,7 +3891,7 @@ function buildBody(stores) {
           // 층별 평당매출(area_f*/area_b*)은 전체합계 표시 안 함
           const isAreaFloor = /^area_(f|b)/.test(child.id);
           tdGT.textContent = isAreaFloor ? '-' : fmtVal(gtv, child.fmt);
-          tdGT.onclick = (e) => { e.stopPropagation(); openModal('전체 합계', kpi, child, gtv, child.fmt); };
+          // tdGT.onclick — 추후 팝업 연결 예정 (옵션B 작업 시 복구)
           trG.appendChild(tdGT);
 
           let lastRegG = null;
@@ -3896,9 +3932,8 @@ function buildBody(stores) {
                 td.title = 'BCD 브랜드 구성 보기';
                 td.onclick = (e) => { e.stopPropagation(); openBcdGradeModal(s, pgCode); };
               }
-            } else {
-              td.onclick = (e) => { e.stopPropagation(); openModal(s.name, kpi, child, v, child.fmt); };
             }
+            // else: 일반 소분류 — 추후 팝업 연결 예정 (옵션B 작업 시 복구)
             trG.appendChild(td);
           });
           tbody.appendChild(trG);
@@ -3920,7 +3955,7 @@ function buildBody(stores) {
               const tdST = document.createElement('td');
               tdST.className = 'total-cell';
               tdST.textContent = fmtVal(stv, sub.fmt);
-              tdST.onclick = () => openModal('전체 합계', kpi, sub, stv, sub.fmt);
+              // tdST.onclick — 추후 팝업 연결 예정 (옵션B 작업 시 복구)
               trS.appendChild(tdST);
 
               let lastRegS = null;
@@ -3932,7 +3967,7 @@ function buildBody(stores) {
                 td.className = `num-cell ${colorClass(v, sub.fmt)}`;
                 if(s.region !== lastRegS) { td.classList.add('region-sep-light'); lastRegS = s.region; }
                 td.textContent = fmtVal(v, sub.fmt);
-                td.onclick = () => openModal(s.name, kpi, sub, v, sub.fmt);
+                // td.onclick — 추후 팝업 연결 예정 (옵션B 작업 시 복구)
                 trS.appendChild(td);
               });
               tbody.appendChild(trS);
@@ -3970,7 +4005,7 @@ function buildBody(stores) {
           } else {
             tdCT.textContent = isAreaFloorC ? '-' : fmtVal(ctv, child.fmt);
           }
-          tdCT.onclick = () => openModal('전체 합계', kpi, child, ctv, child.fmt);
+          // tdCT.onclick — 추후 팝업 연결 예정 (옵션B 작업 시 복구)
           trC.appendChild(tdCT);
 
           let lastRegC = null;
@@ -4016,9 +4051,8 @@ function buildBody(stores) {
                 td.title = 'BCD 브랜드 구성 보기';
                 td.onclick = (e) => { e.stopPropagation(); openBcdGradeModal(s, pgCode); };
               }
-            } else {
-              td.onclick = () => openModal(s.name, kpi, child, v, child.fmt);
             }
+            // else: 일반 KPI 소분류 — 추후 팝업 연결 예정 (옵션B 작업 시 복구)
             trC.appendChild(td);  // ★ 누락 수정
           });
           tbody.appendChild(trC);
@@ -6366,6 +6400,15 @@ function getBrandSearchRows(query) {
     const storeBrands = brandMap[storeId];
     if (!storeBrands) return;
 
+    // 점포별 bcdg_brands → brandCode 기반 grade 맵 구성 (1회)
+    const storeBcdg = (DATA[store.name] && DATA[store.name].bcdg_brands) || {};
+    const gradeMap  = {};
+    Object.values(storeBcdg).forEach(pg => {
+      (pg.list || []).forEach(x => {
+        if (x.brandCode) gradeMap[x.brandCode] = x.grade || '-';
+      });
+    });
+
     Object.entries(storeBrands).forEach(([pgCode, brands]) => {
       if (!Array.isArray(brands)) return;
       brands.forEach(b => {
@@ -6399,6 +6442,7 @@ function getBrandSearchRows(query) {
           floor     : floorLabel,
           brandCode : b.brandCode,
           brandName : b.brandName,
+          grade     : gradeMap[b.brandCode] || '-',
           cy        : b.cy  ?? null,
           py        : b.py  ?? null,
           areaSize,
@@ -6428,7 +6472,7 @@ function bsSortBy(col) {
 
 function renderBsTable() {
   // 헤더 정렬 아이콘 갱신
-  const colKeys = ['cy','py','gr','area','aps','workDays'];
+  const colKeys = ['grade','cy','py','gr','area','aps','workDays'];
   document.querySelectorAll('#bsTable thead th.bs-sortable').forEach((th, i) => {
     th.classList.remove('bs-sort-asc','bs-sort-desc');
     if (colKeys[i] === bsSortCol) {
@@ -6439,9 +6483,15 @@ function renderBsTable() {
   // 정렬
   let rows = [...bsCurrentRows];
   if (bsSortCol) {
+    const GRADE_RANK = {S:1, A:2, B:3, C:4, F:5, '-':6};
     rows.sort((a, b) => {
       let va, vb;
-      if (bsSortCol === 'gr') {
+      if (bsSortCol === 'grade') {
+        va = GRADE_RANK[a.grade] ?? 6;
+        vb = GRADE_RANK[b.grade] ?? 6;
+        // 등급은 S가 1(가장 좋음) → asc가 직관적이므로 방향 반전
+        return bsSortDir === 'desc' ? va - vb : vb - va;
+      } else if (bsSortCol === 'gr') {
         va = (a.py > 0) ? (a.cy - a.py) / a.py * 100 : null;
         vb = (b.py > 0) ? (b.cy - b.py) / b.py * 100 : null;
       } else if (bsSortCol === 'area') {
@@ -6473,8 +6523,11 @@ function renderBsTable() {
     const areaStr    = r.areaSize  !== null ? r.areaSize + '평' : '<span style="color:var(--text-dim)">-</span>';
     const apsStr     = r.areaSales !== null ? Math.round(r.areaSales).toLocaleString() : '<span style="color:var(--text-dim)">-</span>';
     const wdStr      = r.workDays  !== null ? r.workDays + '일' : '<span style="color:var(--text-dim)">-</span>';
+    const gradeCls   = 'grade-' + (r.grade === '-' ? '' : r.grade);
+    const gradeStr   = `<span class="grade-badge ${gradeCls}">${r.grade}</span>`;
     return `<tr>
       <td>${r.storeName}</td>
+      <td>${gradeStr}</td>
       <td><span class="bs-floor-badge">${r.floor}</span></td>
       <td>${cyStr}</td>
       <td>${pyStr}</td>
@@ -6492,7 +6545,7 @@ function renderBsTable() {
   const totGrStr = totGr !== null ? (totGr >= 0 ? '+' : '') + totGr.toFixed(1) + '%' : '-';
   const totGrCls = totGr === null ? '' : totGr >= 0 ? 'color:var(--green)' : 'color:var(--red)';
   document.getElementById('bsTfoot').innerHTML = `<tr>
-    <td>합계</td><td></td>
+    <td>합계</td><td></td><td></td>
     <td>${fmt(totCy)}</td>
     <td>${fmt(totPy)}</td>
     <td style="${totGrCls}">${totGrStr}</td>
@@ -6682,6 +6735,9 @@ document.addEventListener('click', function(e) {
 });
 
 // ─── MODAL ───
+// [DEPRECATED 2026-04] openModal 함수 — rf(랜덤 함수) 미정의로 에러 발생.
+// 옵션B 작업 시 참고용으로 보존. 호출부는 모두 비활성화 완료.
+/*
 function openModal(storeName, kpi, child, val, fmt) {
   document.getElementById('mCrumb').textContent = storeName + '점  ·  ' + kpi.label;
   document.getElementById('mTitle').textContent = child ? child.label : kpi.label + ' 전체';
@@ -6720,6 +6776,7 @@ function openModal(storeName, kpi, child, val, fmt) {
 
   document.getElementById('overlay').classList.add('open');
 }
+*/
 
 function closeModal() {
   document.getElementById('overlay').classList.remove('open');
@@ -7142,6 +7199,36 @@ const PG_LABEL_MAP = {
 };
 const PG_ORDER = ['BCA','BIA','BDA','BEA','BJA','BBA','BFA'];
 
+// BCD 등급 가중치 (전사 공통 — AS와 동일)
+const BCD_GRADE_WEIGHT = { 'S':1.3, 'A':1.3, 'B':1.0, 'C':0, 'F':0 };
+const BCD_GOOD_GRADES  = new Set(['S','A','B']);
+
+// 브랜드 리스트 → 가중 BCD 점수 + 등급 분포 계산
+function calcWeightedBcdScore(brandList) {
+  const dist = { S:0, A:0, B:0, C:0, F:0, '-':0 };
+  let weighted = 0, total = 0, goodCount = 0;
+  (brandList || []).forEach(b => {
+    const g = b.grade || '-';
+    if (dist[g] !== undefined) dist[g]++; else dist['-']++;
+    total++;
+    if (BCD_GOOD_GRADES.has(g)) goodCount++;
+    weighted += (BCD_GRADE_WEIGHT[g] ?? 0);
+  });
+  const score = total > 0 ? Math.min(Math.round((weighted / total) * 1000) / 10, 100) : 0;
+  return { score, dist, total, goodCount };
+}
+
+// 등급 분포 칩 HTML 렌더링
+function renderBcdDistChips(dist) {
+  const order = ['S','A','B','C','F','-'];
+  const labelMap = { 'S':'S', 'A':'A', 'B':'B', 'C':'C', 'F':'F', '-':'미등록' };
+  const clsMap   = { 'S':'dS','A':'dA','B':'dB','C':'dC','F':'dF','-':'dN' };
+  return order
+    .filter(g => dist[g] > 0)
+    .map(g => `<span class="bcdg-dist-chip ${clsMap[g]}">${labelMap[g]} ${dist[g]}</span>`)
+    .join('');
+}
+
 // pgCode = null 이면 전체 복종 표시
 function openBcdGradeModal(store, pgCode) {
   const bcdgData  = DATA[store.name]?.bcdg_brands || {};
@@ -7167,14 +7254,35 @@ function openBcdGradeModal(store, pgCode) {
   let html = '';
 
   if (isAll) {
-    const { totalAll = 0, totalGood = 0 } = bcdgSumm;
-    const score = totalAll > 0 ? Math.round((totalGood / totalAll) * 1000) / 10 : 0;
-    html += `<div class="bcdg-calc">(S+A+B) ${totalGood}개 / 전체 ${totalAll}개 = <b>${score}점</b></div>`;
+    // 전체 복종: 모든 브랜드 합쳐서 가중치 계산
+    const allBrands = [];
+    PG_ORDER.forEach(pg => {
+      const d = bcdgData[pg];
+      if (d && Array.isArray(d.list)) allBrands.push(...d.list);
+    });
+    const { score, dist, total, goodCount } = calcWeightedBcdScore(allBrands);
+
+    html += `
+      <div class="bcdg-score-row">
+        <div class="bcdg-score-main">BCD 점수 <b>${score.toFixed(1)}점</b></div>
+        <div class="bcdg-dist">${renderBcdDistChips(dist)}</div>
+      </div>
+      <div class="bcdg-formula">
+        (S+A+B) ${goodCount}개 / 전체 ${total}개 &nbsp;·&nbsp;
+        <b>가중치: S/A=1.3, B=1.0</b>
+      </div>
+    `;
+
     PG_ORDER.forEach(pg => {
       const d = bcdgData[pg];
       if (!d || !d.list || d.list.length === 0) return;
-      const pgScore = d.total > 0 ? Math.round((d.good / d.total) * 1000) / 10 : 0;
-      html += `<div class="bcdg-section-label">${PG_LABEL_MAP[pg] || pg} &nbsp;<span style="font-weight:400;color:#94a3b8">${pgScore}점 (${d.good}/${d.total})</span></div>`;
+      const pgCalc = calcWeightedBcdScore(d.list);
+      html += `<div class="bcdg-section-label">${PG_LABEL_MAP[pg] || pg}
+        <span class="bcdg-pg-score">
+          <b>${pgCalc.score.toFixed(1)}점</b>
+          <span style="opacity:0.7">(${pgCalc.goodCount}/${pgCalc.total})</span>
+        </span>
+      </div>`;
       html += renderBcdgBrandList(d.list, brandAreaMap, rankMap, totalRankCount);
     });
   } else {
@@ -7182,8 +7290,17 @@ function openBcdGradeModal(store, pgCode) {
     if (!d || !d.list || d.list.length === 0) {
       html = '<div class="brand-loading">브랜드 데이터가 없습니다.</div>';
     } else {
-      const score = d.total > 0 ? Math.round((d.good / d.total) * 1000) / 10 : 0;
-      html += `<div class="bcdg-calc">(S+A+B) ${d.good}개 / 전체 ${d.total}개 = <b>${score}점</b></div>`;
+      const { score, dist, total, goodCount } = calcWeightedBcdScore(d.list);
+      html += `
+        <div class="bcdg-score-row">
+          <div class="bcdg-score-main">${PG_LABEL_MAP[pgCode] || pgCode} <b>${score.toFixed(1)}점</b></div>
+          <div class="bcdg-dist">${renderBcdDistChips(dist)}</div>
+        </div>
+        <div class="bcdg-formula">
+          (S+A+B) ${goodCount}개 / 전체 ${total}개 &nbsp;·&nbsp;
+          <b>가중치: S/A=1.3, B=1.0</b>
+        </div>
+      `;
       html += renderBcdgBrandList(d.list, brandAreaMap, rankMap, totalRankCount);
     }
   }
